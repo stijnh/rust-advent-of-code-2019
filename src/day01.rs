@@ -1,7 +1,7 @@
 use crate::common::*;
 
 /// Simply calculates the required fuel for the given mass.
-fn fuel_for_mass_simple(x: f64) -> f64{
+fn fuel_for_mass_simple(x: f64) -> f64 {
     (x / 3.0).floor() - 2.0
 }
 
@@ -17,7 +17,8 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     let mut part_b = 0.0;
 
     for (index, line) in enumerate(read_input("day01")?) {
-        let mass = line.parse::<f64>()
+        let mass = line
+            .parse::<f64>()
             .with_context(|| format!("failed to parse mass on line {}", index + 1))?;
         part_a += fuel_for_mass_simple(mass);
         part_b += fuel_for_mass_complex(mass);
