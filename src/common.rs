@@ -18,9 +18,8 @@ pub type Result<T = (), E = Error> = std::result::Result<T, E>;
 pub(crate) fn read_input(filename: &str) -> Result<Vec<String>> {
     let path = format!("inputs/{}", filename);
     let f = File::open(&path).with_context(|| format!("failed to open {}", path))?;
-    let lines = BufReader::new(f)
+    BufReader::new(f)
         .lines()
         .collect::<Result<_, _>>()
-        .with_context(|| format!("error while reading {}", path))?;
-    Ok(lines)
+        .with_context(|| format!("error while reading {}", path))
 }
