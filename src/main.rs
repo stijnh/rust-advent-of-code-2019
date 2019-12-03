@@ -2,11 +2,12 @@
 mod common;
 mod day01;
 mod day02;
+mod day03;
 
 use std::env;
 
 fn main() {
-    let funs = [day01::run, day02::run];
+    let funs = [day01::run, day02::run, day03::run];
 
     let args: Vec<_> = env::args().collect();
     let args: Vec<_> = args.iter().map(String::as_ref).collect();

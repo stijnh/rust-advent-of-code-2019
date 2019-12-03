@@ -1,5 +1,4 @@
 use crate::common::*;
-use thiserror::Error;
 
 #[derive(Error, Debug)]
 enum ExecError {
@@ -10,15 +9,24 @@ enum ExecError {
     InvalidIndex(i64),
 }
 
+#[inline(never)]
 fn run_program(program: &mut [i64]) -> Result<(), ExecError> {
     use ExecError::*;
     let mut index = 0;
 
-    #[inline]
+    #[inline(always)]
     fn get(program: &mut [i64], index: i64) -> Result<i64, ExecError> {
         program
             .get(index as usize)
             .copied()
+            .ok_or(InvalidIndex(index))
+    }
+
+    #[inline(always)]
+    fn set(program: &mut [i64], index: i64, value: i64) -> Result<(), ExecError> {
+        program
+            .get_mut(index as usize)
+            .map(|p| *p = value)
             .ok_or(InvalidIndex(index))
     }
 
@@ -32,25 +40,23 @@ fn run_program(program: &mut [i64]) -> Result<(), ExecError> {
 
             let a = get(program, lhs)?;
             let b = get(program, rhs)?;
-            let c = program.get_mut(dst as usize).ok_or(InvalidIndex(dst))?;
+            let c = iff!(opcode == 1, a + b, a * b);
+            set(program, dst, c)?;
 
-            *c = iff!(opcode == 1, a + b, a * b);
             index += 4;
         } else if opcode == 99 {
-            break;
+            break Ok(());
         } else {
-            return Err(ExecError::UnknownOpcode(opcode));
+            break Err(ExecError::UnknownOpcode(opcode));
         }
     }
-
-    Ok(())
 }
 
 pub(crate) fn run(_args: &[&str]) -> Result {
     let original = read_input("day02")?
         .remove(0)
         .split(",")
-        .map(|s| s.parse::<i64>())
+        .map(|s| s.parse::<i64>().context("invalid input file"))
         .collect::<Result<Vec<_>, _>>()?;
 
     let mut program = original.clone();

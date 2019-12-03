@@ -2,6 +2,7 @@ pub use anyhow::{Context, Error};
 pub use itertools::enumerate;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+pub use thiserror::Error;
 
 macro_rules! iff {
     ($cond:expr, $a:expr, $b:expr) => {
