@@ -1,5 +1,5 @@
 pub use anyhow::{Context, Error};
-pub use itertools::enumerate;
+pub use itertools::{enumerate, zip};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 pub use thiserror::Error;
