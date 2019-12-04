@@ -2,8 +2,8 @@ use crate::common::*;
 
 #[derive(Copy, Clone, Debug)]
 enum Line {
-    Horz(i64, i64, i64),
-    Vert(i64, i64, i64),
+    Horz(i64, i64, i64), // x, y, length along x axis
+    Vert(i64, i64, i64), // x, y, length along y axis
 }
 
 impl Line {
@@ -11,6 +11,13 @@ impl Line {
         match *self {
             Line::Horz(.., length) => length.abs(),
             Line::Vert(.., length) => length.abs(),
+        }
+    }
+
+    fn distance_to(&self, x: i64, y: i64) -> i64 {
+        match *self {
+            Line::Horz(x0, y0, _) => (x - x0).abs() + (y - y0).abs(),
+            Line::Vert(x0, y0, _) => (x - x0).abs() + (y - y0).abs(),
         }
     }
 }
@@ -77,17 +84,7 @@ pub fn run(_args: &[&str]) -> Result {
                 let dist = x.abs() + y.abs();
                 closest_dist = i64::min(dist, closest_dist);
 
-                let time = time_a
-                    + time_b
-                    + match p {
-                        Line::Horz(x0, _, _) => (x - x0).abs(),
-                        Line::Vert(_, y0, _) => (y - y0).abs(),
-                    }
-                    + match q {
-                        Line::Horz(x0, _, _) => (x - x0).abs(),
-                        Line::Vert(_, y0, _) => (y - y0).abs(),
-                    };
-
+                let time = time_a + time_b + p.distance_to(x, y) + q.distance_to(x, y);
                 fastest_time = i64::min(time, fastest_time);
             }
 
