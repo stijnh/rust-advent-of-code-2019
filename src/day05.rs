@@ -1,5 +1,15 @@
 use crate::common::*;
 
+const OP_ADD: i64 = 1;
+const OP_MUL: i64 = 2;
+const OP_INPUT: i64 = 3;
+const OP_OUTPUT: i64 = 4;
+const OP_BT: i64 = 5; // branch true
+const OP_BF: i64 = 6; // branch false
+const OP_LT: i64 = 7;
+const OP_EQ: i64 = 8;
+const OP_HALT: i64 = 99;
+
 #[derive(Error, Debug)]
 enum ExecError {
     #[error("index out of bounds: {0}")]
@@ -11,6 +21,12 @@ enum ExecError {
 
 fn run_program(program: &mut [i64], mut inputs: &[i64]) -> Result<Vec<i64>, ExecError> {
     use ExecError::*;
+
+    fn next(program: &[i64], index: &mut i64) -> Result<i64, ExecError> {
+        let result = get(program, *index)?;
+        *index += 1;
+        Ok(result)
+    }
 
     fn get(program: &[i64], index: i64) -> Result<i64, ExecError> {
         program
@@ -30,66 +46,51 @@ fn run_program(program: &mut [i64], mut inputs: &[i64]) -> Result<Vec<i64>, Exec
     let mut output = vec![];
 
     loop {
-        let instr = get(program, index)?;
+        let instr = next(program, &mut index)?;
         let opcode = instr % 100;
+        let limm = (instr / 100) % 10 != 0;
+        let rimm = (instr / 1000) % 10 != 0;
 
-        if opcode == 1 || opcode == 2 || opcode == 7 || opcode == 8 {
-            let lhs = get(program, index + 1)?;
-            let rhs = get(program, index + 2)?;
-            let dst = get(program, index + 3)?;
-
-            let limm = (instr / 100) % 10 != 0;
-            let rimm = (instr / 1000) % 10 != 0;
+        if [OP_ADD, OP_MUL, OP_LT, OP_EQ].contains(&opcode) {
+            let lhs = next(program, &mut index)?;
+            let rhs = next(program, &mut index)?;
+            let dst = next(program, &mut index)?;
 
             let a = iff!(limm, lhs, get(program, lhs)?);
             let b = iff!(rimm, rhs, get(program, rhs)?);
             let c = match opcode {
-                1 => a + b,
-                2 => a * b,
-                7 => iff!(a < b, 1, 0),
-                8 => iff!(a == b, 1, 0),
+                OP_ADD => a + b,
+                OP_MUL => a * b,
+                OP_LT => (a < b) as i64,
+                OP_EQ => (a == b) as i64,
                 _ => panic!("invalid opcode"),
             };
 
             set(program, dst, c)?;
-            index += 4;
+        } else if opcode == OP_BT || opcode == OP_BF {
+            let param = next(program, &mut index)?;
+            let target = next(program, &mut index)?;
 
-        } else if opcode == 5 || opcode == 6 {
-            let param = get(program, index + 1)?;
-            let target = get(program, index + 2)?;
+            let a = iff!(limm, param, get(program, param)?);
+            let b = iff!(rimm, target, get(program, target)?);
 
-            let pimm = (instr / 100) % 10 != 0;
-            let timm = (instr / 1000) % 10 != 0;
-
-            let a = iff!(pimm, param, get(program, param)?);
-            let b = iff!(timm, target, get(program, target)?);
-
-            if (opcode == 5 && a != 0) || (opcode == 6 && a == 0) {
+            if (opcode == OP_BT && a != 0) || (opcode == OP_BF && a == 0) {
                 index = b;
-            } else {
-                index += 3;
             }
-
-        } else if opcode == 3 {
+        } else if opcode == OP_INPUT {
             let value = inputs[0];
-            let dst = get(program, index + 1)?;
+            let dst = next(program, &mut index)?;
             set(program, dst, value)?;
 
-            index += 2;
             inputs = &inputs[1..];
-
-        } else if opcode == 4 {
-            let src = get(program, index + 1)?;
+        } else if opcode == OP_OUTPUT {
+            let src = next(program, &mut index)?;
             let value = get(program, src)?;
             output.push(value);
-
-            index += 2;
-
-        } else if opcode == 99 {
-            break Ok(output)
-
+        } else if opcode == OP_HALT {
+            break Ok(output);
         } else {
-            break Err(InvalidOpcode(opcode))
+            break Err(InvalidOpcode(opcode));
         }
     }
 }

@@ -36,7 +36,6 @@ pub(crate) fn run(_args: &[&str]) -> Result {
         .count();
 
     println!("answer B: {}", count);
-    
 
     Ok(())
 }
