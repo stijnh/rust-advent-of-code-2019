@@ -2,8 +2,8 @@ use crate::common::*;
 use std::collections::HashMap;
 
 pub(crate) fn run(_args: &[&str]) -> Result {
+    // parse input
     let mut orbits = HashMap::new();
-    let mut neighbors = HashMap::new();
 
     for line in read_input("day06")? {
         if let Some(index) = line.find(')') {
@@ -11,18 +11,14 @@ pub(crate) fn run(_args: &[&str]) -> Result {
             let dst = line[(index + 1)..].to_string();
 
             orbits.insert(dst.clone(), src.clone());
-
-            for &(a, b) in &[(&src, &dst), (&dst, &src)] {
-                neighbors.entry(a.clone()).or_insert(vec![]).push(b.clone());
-            }
         }
     }
 
+    // for each planet, traverse back to the root and count the number of hops
     let mut total_orbits = 0;
     for origin in orbits.keys() {
         let mut current = origin;
 
-        // for each planet, traverse back to the root
         while let Some(t) = orbits.get(current) {
             total_orbits += 1;
             current = t;
@@ -31,9 +27,16 @@ pub(crate) fn run(_args: &[&str]) -> Result {
 
     println!("answer A: {}", total_orbits);
 
+    // get both backwards and forward edges
+    let mut neighbors = HashMap::<&str, Vec<&str>>::new();
+    for (dst, src) in &orbits {
+        neighbors.entry(src).or_default().push(dst);
+        neighbors.entry(dst).or_default().push(src);
+    }
+
     // basic depth-first-search implementation
     let mut queue = vec![("YOU", 0)];
-    let mut visited: HashMap<&str, u32> = HashMap::new();
+    let mut visited = HashMap::<&str, u32>::new();
 
     while let Some((current, dist)) = queue.pop() {
         for neighbor in &neighbors[current] {
