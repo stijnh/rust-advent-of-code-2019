@@ -6,6 +6,8 @@ mod day03;
 mod day04;
 mod day05;
 mod day06;
+mod day07;
+mod intcode;
 
 use std::env;
 
@@ -17,6 +19,7 @@ fn main() {
         day04::run,
         day05::run,
         day06::run,
+        day07::run,
     ];
 
     let args: Vec<_> = env::args().collect();
