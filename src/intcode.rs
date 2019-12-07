@@ -60,7 +60,7 @@ impl Program {
     }
 
     #[inline(always)]
-    fn get(&self, index: i64) -> Result<i64, ExecError> {
+    pub(crate) fn get(&self, index: i64) -> Result<i64, ExecError> {
         self.data
             .get(index as usize)
             .copied()
@@ -68,7 +68,7 @@ impl Program {
     }
 
     #[inline(always)]
-    fn set(&mut self, index: i64, value: i64) -> Result<(), ExecError> {
+    pub(crate) fn set(&mut self, index: i64, value: i64) -> Result<(), ExecError> {
         self.data
             .get_mut(index as usize)
             .map(|p| *p = value)
