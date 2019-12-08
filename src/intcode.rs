@@ -46,10 +46,7 @@ pub(crate) struct Program {
 
 impl Program {
     pub(crate) fn new(data: Vec<i64>) -> Self {
-        Self { 
-            data,
-            index: 0 
-        }
+        Self { data, index: 0 }
     }
 
     #[inline(always)]
@@ -83,10 +80,10 @@ impl Program {
             match self.resume(&mut inputs)? {
                 ExecState::Halted => {
                     return Ok(output);
-                },
+                }
                 ExecState::Output(v) => {
                     output.push(v);
-                },
+                }
                 ExecState::Input => {
                     return Err(ExecError::InputExhausted);
                 }
@@ -94,11 +91,17 @@ impl Program {
         }
     }
 
-    pub(crate) fn resume<I: IntoIterator<Item=i64>>(&mut self, inputs: I) -> Result<ExecState, ExecError> {
+    pub(crate) fn resume<I: IntoIterator<Item = i64>>(
+        &mut self,
+        inputs: I,
+    ) -> Result<ExecState, ExecError> {
         self.resume_internal(&mut inputs.into_iter())
     }
 
-    fn resume_internal(&mut self, inputs: &mut dyn Iterator<Item=i64>) -> Result<ExecState, ExecError> {
+    fn resume_internal(
+        &mut self,
+        inputs: &mut dyn Iterator<Item = i64>,
+    ) -> Result<ExecState, ExecError> {
         use ExecError::*;
 
         loop {
