@@ -8,18 +8,19 @@ const OP_BT: i64 = 5; // branch true
 const OP_BF: i64 = 6; // branch false
 const OP_LT: i64 = 7;
 const OP_EQ: i64 = 8;
+const OP_REBASE: i64 = 9;
 const OP_HALT: i64 = 99;
 
 #[derive(Error, Debug)]
 pub(crate) enum ExecError {
-    #[error("index out of bounds: {0}")]
-    InvalidIndex(i64),
-
     #[error("invalid opcode: {0}")]
     InvalidOpcode(i64),
 
     #[error("insufficient number of inputs provided")]
     InputExhausted,
+
+    #[error("invalid argument type: {0}")]
+    InvalidArgumentType(i64),
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -42,11 +43,16 @@ pub(crate) fn parse_program(filename: &str) -> Result<Program> {
 pub(crate) struct Program {
     data: Vec<i64>,
     index: i64,
+    base: i64,
 }
 
 impl Program {
     pub(crate) fn new(data: Vec<i64>) -> Self {
-        Self { data, index: 0 }
+        Self {
+            data,
+            index: 0,
+            base: 0,
+        }
     }
 
     #[inline(always)]
@@ -58,18 +64,17 @@ impl Program {
 
     #[inline(always)]
     pub(crate) fn get(&self, index: i64) -> Result<i64, ExecError> {
-        self.data
-            .get(index as usize)
-            .copied()
-            .ok_or(ExecError::InvalidIndex(index))
+        Ok(self.data.get(index as usize).copied().unwrap_or(0))
     }
 
     #[inline(always)]
     pub(crate) fn set(&mut self, index: i64, value: i64) -> Result<(), ExecError> {
-        self.data
-            .get_mut(index as usize)
-            .map(|p| *p = value)
-            .ok_or(ExecError::InvalidIndex(index))
+        if index as usize >= self.data.len() {
+            self.data.resize(index as usize + 1, 0);
+        }
+
+        self.data[index as usize] = value;
+        Ok(())
     }
 
     pub(crate) fn run(&mut self, inputs: &[i64]) -> Result<Vec<i64>, ExecError> {
@@ -104,19 +109,37 @@ impl Program {
     ) -> Result<ExecState, ExecError> {
         use ExecError::*;
 
+        #[inline(always)]
+        fn fetch_arg(program: &mut Program, typ: i64) -> Result<i64, ExecError> {
+            let val = program.next()?;
+            match typ {
+                0 => program.get(val),
+                1 => Ok(val),
+                2 => program.get(program.base + val),
+                _ => Err(InvalidArgumentType(typ)),
+            }
+        }
+
+        #[inline(always)]
+        fn fetch_addr(program: &mut Program, typ: i64) -> Result<i64, ExecError> {
+            let val = program.next()?;
+            match typ {
+                0 => Ok(val),
+                2 => Ok(program.base + val),
+                _ => Err(InvalidArgumentType(typ)),
+            }
+        }
+
         loop {
             let instr = self.next()?;
             let opcode = instr % 100;
-            let limm = (instr / 100) % 10 != 0;
-            let rimm = (instr / 1000) % 10 != 0;
+            let type_a = (instr / 100) % 10;
+            let type_b = (instr / 1000) % 10;
+            let type_c = (instr / 10000) % 10;
 
             if [OP_ADD, OP_MUL, OP_LT, OP_EQ].contains(&opcode) {
-                let lhs = self.next()?;
-                let rhs = self.next()?;
-                let dst = self.next()?;
-
-                let a = iff!(limm, lhs, self.get(lhs)?);
-                let b = iff!(rimm, rhs, self.get(rhs)?);
+                let a = fetch_arg(self, type_a)?;
+                let b = fetch_arg(self, type_b)?;
                 let c = match opcode {
                     OP_ADD => a + b,
                     OP_MUL => a * b,
@@ -125,28 +148,27 @@ impl Program {
                     _ => panic!("invalid opcode"),
                 };
 
+                let dst = fetch_addr(self, type_c)?;
                 self.set(dst, c)?;
             } else if opcode == OP_BT || opcode == OP_BF {
-                let param = self.next()?;
-                let target = self.next()?;
-
-                let a = iff!(limm, param, self.get(param)?);
-                let b = iff!(rimm, target, self.get(target)?);
+                let a = fetch_arg(self, type_a)?;
+                let b = fetch_arg(self, type_b)?;
 
                 if (opcode == OP_BT && a != 0) || (opcode == OP_BF && a == 0) {
                     self.index = b;
                 }
+            } else if opcode == OP_REBASE {
+                self.base += fetch_arg(self, type_a)?;
             } else if opcode == OP_INPUT {
                 if let Some(value) = inputs.next() {
-                    let dst = self.next()?;
+                    let dst = fetch_addr(self, type_a)?;
                     self.set(dst, value)?;
                 } else {
                     self.index -= 1;
                     break Ok(ExecState::Input);
                 }
             } else if opcode == OP_OUTPUT {
-                let src = self.next()?;
-                let value = self.get(src)?;
+                let value = fetch_arg(self, type_a)?;
                 break Ok(ExecState::Output(value));
             } else if opcode == OP_HALT {
                 break Ok(ExecState::Halted);
