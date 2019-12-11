@@ -1,6 +1,6 @@
 use crate::common::*;
-use std::collections::{HashSet, BTreeMap, BinaryHeap};
 use float_ord::FloatOrd;
+use std::collections::{BTreeMap, BinaryHeap, HashSet};
 
 fn gcd(a: isize, b: isize) -> isize {
     iff!(b == 0, a, gcd(b, a % b))

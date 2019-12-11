@@ -1,14 +1,14 @@
 use crate::common::*;
 use crate::intcode::*;
-use std::collections::HashMap;
 use itertools::Itertools;
+use std::collections::HashMap;
 
 #[derive(Copy, Clone, Hash, Debug)]
 enum Direction {
     North,
     East,
     South,
-    West
+    West,
 }
 
 use Direction::*;
@@ -44,10 +44,7 @@ fn paint(mut program: Program, start_tile: i64) -> Result<HashMap<(isize, isize)
     panels.insert((x, y), start_tile);
 
     loop {
-        let color = panels
-            .get(&(x, y))
-            .copied()
-            .unwrap_or(0);
+        let color = panels.get(&(x, y)).copied().unwrap_or(0);
 
         let new_color = match program.resume(Some(color))? {
             ExecState::Halted => break,
