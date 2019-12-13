@@ -39,14 +39,6 @@ fn iterate_timestep(pos: &mut [[i64; 3]], vel: &mut [[i64; 3]]) {
     }
 }
 
-fn print_moons(pos: &[[i64; 3]], vel: &[[i64; 3]]) {
-    for (p, v) in zip(pos, vel) {
-        println!("pos=<x={:2}, y={:2}, z={:2}>, vel=<x={:2}, y={:2}, z={:2}>",
-            p[0], p[1], p[2],
-            v[0], v[1], v[2]);
-    }
-}
-
 fn calculate_energy(pos: &[[i64; 3]], vel: &[[i64; 3]]) -> i64 {
     let mut energy = 0;
 
@@ -76,7 +68,7 @@ pub(crate) fn run(_args: &[&str]) ->Result {
 
     {
         let (mut pos, mut vel) = (pos.clone(), vel.clone());
-        for i in 0..1000 {
+        for _ in 0..1000 {
             iterate_timestep(&mut pos, &mut vel);
         }
         println!("answer A: {}", calculate_energy(&pos, &vel));

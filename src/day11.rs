@@ -1,6 +1,5 @@
 use crate::common::*;
 use crate::intcode::*;
-use itertools::Itertools;
 use std::collections::HashMap;
 
 #[derive(Copy, Clone, Hash, Debug)]
