@@ -1,8 +1,8 @@
 use crate::common::*;
 use crate::intcode::*;
 use ndarray::prelude::*;
-use std::thread::sleep;
 use std::cmp::Ordering;
+use std::thread::sleep;
 use std::time::Duration;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -12,12 +12,17 @@ enum Tile {
     Wall,
     Block,
     Paddle,
-    Ball
+    Ball,
 }
 
 use Tile::*;
 
-fn run_timestep(input: i64, program: &mut Program, board: &mut Array2<Tile>, score: &mut i64) -> Result {
+fn run_timestep(
+    input: i64,
+    program: &mut Program,
+    board: &mut Array2<Tile>,
+    score: &mut i64,
+) -> Result {
     let mut input = Some(input).into_iter();
     let mut outputs = vec![];
 
@@ -26,7 +31,7 @@ fn run_timestep(input: i64, program: &mut Program, board: &mut Array2<Tile>, sco
             ExecState::Output(x) => outputs.push(x),
             _ => break,
         }
-    };
+    }
 
     for slice in outputs.chunks_exact(3) {
         let (x, y, id) = (slice[0], slice[1], slice[2]);
@@ -93,7 +98,6 @@ pub(crate) fn run(args: &[&str]) -> Result {
 
     // Run game until all blocks are gone
     while count_block_tiles(&board) > 0 {
-
         // Print visualization if argument given
         if !args.is_empty() {
             print_board(&board);

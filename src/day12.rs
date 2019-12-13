@@ -49,7 +49,7 @@ fn calculate_energy(pos: &[[i64; 3]], vel: &[[i64; 3]]) -> i64 {
     energy
 }
 
-pub(crate) fn run(_args: &[&str]) ->Result {
+pub(crate) fn run(_args: &[&str]) -> Result {
     let pattern = regex::Regex::new("<x=(-?[0-9]+), y=(-?[0-9]+), z=(-?[0-9]+)>")?;
     let mut pos = vec![];
     let mut vel = vec![];
