@@ -2,6 +2,7 @@ pub use anyhow::{Context, Error};
 pub use itertools::{enumerate, zip};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::default::Default;
 pub use thiserror::Error;
 
 macro_rules! iff {
@@ -12,6 +13,10 @@ macro_rules! iff {
             $b
         }
     };
+}
+
+pub fn default<T: Default>() -> T {
+    T::default()
 }
 
 pub type Result<T = (), E = Error> = std::result::Result<T, E>;
