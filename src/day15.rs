@@ -35,10 +35,10 @@ impl Direction {
 
     fn apply_delta(self, (x, y): (usize, usize)) -> (usize, usize) {
         match self {
-            North => (x, y-1),
-            South => (x, y+1),
-            West => (x-1, y),
-            East => (x+1, y),
+            North => (x, y - 1),
+            South => (x, y + 1),
+            West => (x - 1, y),
+            East => (x + 1, y),
         }
     }
 }
@@ -119,19 +119,15 @@ pub(crate) fn run(_args: &[&str]) -> Result {
         .indexed_iter()
         .filter(|(_, &val)| val == Goal)
         .next()
-        .unwrap().0;
+        .unwrap()
+        .0;
 
     let dist = calculate_dist(goal, grid.view());
     println!("answer A: {}", dist[start]);
 
-    let max_dist = dist
-        .iter()
-        .filter(|&&d| d != std::i64::MAX)
-        .max();
+    let max_dist = dist.iter().filter(|&&d| d != std::i64::MAX).max();
 
     println!("answer B: {:?}", max_dist);
-
-
 
     Ok(())
 }

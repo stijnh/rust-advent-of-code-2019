@@ -1,8 +1,8 @@
 pub use anyhow::{Context, Error};
 pub use itertools::{enumerate, zip};
+use std::default::Default;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use std::default::Default;
 pub use thiserror::Error;
 
 macro_rules! iff {
