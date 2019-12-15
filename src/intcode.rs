@@ -1,4 +1,5 @@
 use crate::common::*;
+use std::sync::Arc;
 
 const OP_ADD: i64 = 1;
 const OP_MUL: i64 = 2;
@@ -41,7 +42,7 @@ pub(crate) fn parse_program(filename: &str) -> Result<Program> {
 
 #[derive(Debug, Clone)]
 pub(crate) struct Program {
-    data: Vec<i64>,
+    data: Arc<[i64]>,
     index: i64,
     base: i64,
 }
@@ -49,7 +50,7 @@ pub(crate) struct Program {
 impl Program {
     pub(crate) fn new(data: Vec<i64>) -> Self {
         Self {
-            data,
+            data: data.into(),
             index: 0,
             base: 0,
         }
@@ -69,11 +70,17 @@ impl Program {
 
     #[inline(always)]
     pub(crate) fn set(&mut self, index: i64, value: i64) -> Result<(), ExecError> {
-        if index as usize >= self.data.len() {
-            self.data.resize(index as usize + 1, 0);
+        let (i, n) = (index as usize, self.data.len());
+
+        if let (Some(data), true) = (Arc::get_mut(&mut self.data), i < n) {
+            data[i] = value;
+        } else {
+            let mut vec = vec![0; usize::max(i * 2 + 1, n)];
+            vec[..n].copy_from_slice(&self.data);
+            vec[i] = value;
+            self.data = vec.into();
         }
 
-        self.data[index as usize] = value;
         Ok(())
     }
 
