@@ -65,10 +65,9 @@ fn find_ore_for_fuel(reactions: &[Reaction], fuel: i64) -> i64 {
     pending.insert("FUEL", fuel);
 
     for r in reactions {
-        let k = *pending.get(&*r.output.0).unwrap_or(&0);
-        let n = ceil_div(k, r.output.1);
+        if let Some(&k) = pending.get(&*r.output.0) {
+            let n = ceil_div(k, r.output.1);
 
-        if n > 0 {
             for input in &r.input {
                 *pending.entry(&input.0).or_default() += input.1 * n;
             }
