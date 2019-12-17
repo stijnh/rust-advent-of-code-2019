@@ -3,6 +3,7 @@ pub use itertools::{enumerate, zip};
 use std::default::Default;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::iter::Sum;
 pub use thiserror::Error;
 
 macro_rules! iff {
@@ -15,8 +16,27 @@ macro_rules! iff {
     };
 }
 
+#[inline(always)]
 pub fn default<T: Default>() -> T {
     T::default()
+}
+
+#[inline(always)]
+pub fn sum<I>(iter: I) -> I::Item
+where
+    I: IntoIterator,
+    I::Item: Sum,
+{
+    iter.into_iter().sum()
+}
+
+#[inline(always)]
+pub fn map<I, F, B>(fun: F, iter: I) -> impl Iterator<Item = B>
+where
+    I: IntoIterator,
+    F: FnMut(I::Item) -> B,
+{
+    iter.into_iter().map(fun)
 }
 
 pub type Result<T = (), E = Error> = std::result::Result<T, E>;
