@@ -175,52 +175,59 @@ fn path2command(path: &[Step]) -> String {
 
 fn find_routines<'a>(
     path: &'a [Step],
-    routines: &[&'a [Step]],
-    trace: &[usize],
-) -> Option<(Vec<&'a [Step]>, Vec<usize>)> {
-    if path.len() == 0 {
-        return Some((routines.to_vec(), trace.to_vec()));
+    routines: &mut Vec<&'a [Step]>,
+    trace: &mut Vec<usize>,
+) -> bool {
+    // we have reached the end, return true to indicate success
+    if path.is_empty() {
+        return true;
     }
 
-    let mut trace = trace.to_vec();
+    // trace cannot be longer than 10 characters
     if trace.len() > 10 {
-        return None;
+        return false;
     }
 
-    for (index, routine) in enumerate(routines) {
+    // check if path starts with any of the existing routines
+    for index in 0..routines.len() {
+        let routine = routines[index];
+        let n = routine.len();
+
         if path.starts_with(routine) {
-            let i = routine.len();
             trace.push(index);
 
-            if let Some(answer) = find_routines(&path[i..], routines, &trace) {
-                return Some(answer);
+            if find_routines(&path[n..], routines, trace) {
+                return true;
             }
 
             trace.pop();
         }
     }
 
+    // if less than 3 routines so far, check if each prefix of path
+    // is a possible routine 
     if routines.len() < 3 {
         for i in 2..path.len() {
             let slice = &path[..i];
 
+            // routines cannot be longer than 20 characters
             if path2command(slice).len() > 20 {
                 continue;
             }
 
-            let mut new_routines = routines.to_vec();
-            new_routines.push(slice);
-            trace.push(new_routines.len() - 1);
+            trace.push(routines.len());
+            routines.push(slice);
 
-            if let Some(answer) = find_routines(&path[i..], &new_routines, &trace) {
-                return Some(answer);
+            if find_routines(&path[i..], routines, trace) {
+                return true;
             }
 
             trace.pop();
+            routines.pop();
         }
     }
 
-    None
+    false
 }
 
 fn send_commands(program: &mut Program, trace: &[usize], routines: &[&[Step]]) -> Result<i64> {
@@ -266,7 +273,10 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     println!("answer A: {}", sum(alignments));
 
     let path = find_path(&grid);
-    let (routines, trace) = find_routines(&path, &[], &[]).expect("to find routines");
+
+    let mut routines = vec![];
+    let mut trace = vec![];
+    find_routines(&path, &mut routines, &mut trace);
 
     println!("Path: {}", path2command(&path));
     println!("Main: {}", trace.iter().copied().join(","));
