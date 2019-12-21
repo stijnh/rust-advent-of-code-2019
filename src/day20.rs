@@ -1,5 +1,4 @@
 use crate::common::*;
-use ndarray::prelude::*;
 use std::collections::{HashMap, HashSet, VecDeque};
 
 type Grid = HashMap<(i32, i32), char>;

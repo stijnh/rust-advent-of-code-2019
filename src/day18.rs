@@ -1,7 +1,6 @@
 use crate::common::*;
-use std::collections::{HashMap, VecDeque, HashSet};
+use std::collections::{HashMap, VecDeque};
 use binary_heap_plus::BinaryHeap;
-use std::iter::FromIterator;
 use ndarray::prelude::*;
 use std::fmt;
 use itertools::Itertools;
@@ -226,9 +225,7 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     grid[[x + 1, y    ]] = '#';
     grid[[x + 1, y + 1]] = '3';
 
-    let nodes = "0123abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect_vec();
     let answer = explore_grid_four(grid.view());
-
     println!("answer B: {:?}", answer);
 
 
