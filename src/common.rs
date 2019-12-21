@@ -39,6 +39,10 @@ where
     iter.into_iter().map(fun)
 }
 
+pub fn cycle<T: Clone>(val: T) -> impl Iterator<Item = T> {
+    Some(val).into_iter().cycle()
+}
+
 pub type Result<T = (), E = Error> = std::result::Result<T, E>;
 
 pub(crate) fn read_input(filename: &str) -> Result<Vec<String>> {
