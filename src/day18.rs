@@ -1,9 +1,9 @@
 use crate::common::*;
-use std::collections::{HashMap, VecDeque};
 use binary_heap_plus::BinaryHeap;
-use ndarray::prelude::*;
-use std::fmt;
 use itertools::Itertools;
+use ndarray::prelude::*;
+use std::collections::{HashMap, VecDeque};
+use std::fmt;
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd, Ord, Eq, Hash)]
 struct KeySet(u32);
@@ -88,7 +88,7 @@ fn build_distance_matrix(grid: ArrayView2<char>, characters: &[char]) -> Array2<
                 continue;
             }
 
-            for &[x, y] in &[[cx -1, cy], [cx + 1, cy], [cx, cy - 1], [cx, cy + 1]] {
+            for &[x, y] in &[[cx - 1, cy], [cx + 1, cy], [cx, cy - 1], [cx, cy + 1]] {
                 if !visited[[x, y]] {
                     visited[[x, y]] = true;
                     queue.push_back((x, y, dist + 1));
@@ -141,7 +141,6 @@ fn explore_grid(grid: ArrayView2<char>) -> Option<usize> {
         .min()
 }
 
-
 fn explore_grid_four(grid: ArrayView2<char>) -> Option<usize> {
     let nodes = "0123abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         .chars()
@@ -181,7 +180,6 @@ fn explore_grid_four(grid: ArrayView2<char>) -> Option<usize> {
                     let mut next_indices = indices;
                     next_indices[robot] = next_index;
 
-
                     let entry = states
                         .entry((next_indices, next_keys))
                         .or_insert(std::usize::MAX);
@@ -197,7 +195,6 @@ fn explore_grid_four(grid: ArrayView2<char>) -> Option<usize> {
 
     None
 }
-
 
 pub(crate) fn run(_args: &[&str]) -> Result {
     let lines = read_input("day18")?;
@@ -216,19 +213,17 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     let mut grid = grid.clone();
     let (x, y) = (w / 2, h / 2);
     grid[[x - 1, y - 1]] = '0';
-    grid[[x - 1, y    ]] = '#';
+    grid[[x - 1, y]] = '#';
     grid[[x - 1, y + 1]] = '1';
-    grid[[x    , y - 1]] = '#';
-    grid[[x    , y    ]] = '#';
-    grid[[x    , y + 1]] = '#';
+    grid[[x, y - 1]] = '#';
+    grid[[x, y]] = '#';
+    grid[[x, y + 1]] = '#';
     grid[[x + 1, y - 1]] = '2';
-    grid[[x + 1, y    ]] = '#';
+    grid[[x + 1, y]] = '#';
     grid[[x + 1, y + 1]] = '3';
 
     let answer = explore_grid_four(grid.view());
     println!("answer B: {:?}", answer);
-
-
 
     Ok(())
 }

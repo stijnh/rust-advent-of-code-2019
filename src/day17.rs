@@ -205,7 +205,7 @@ fn find_routines<'a>(
     }
 
     // if less than 3 routines so far, check if each prefix of path
-    // is a possible routine 
+    // is a possible routine
     if routines.len() < 3 {
         for i in 2..path.len() {
             let slice = &path[..i];

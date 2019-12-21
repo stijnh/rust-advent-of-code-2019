@@ -27,18 +27,16 @@ fn find_portals(grid: &Grid) -> HashMap<String, Vec<(i32, i32)>> {
                 let b = grid.get(&(x - 2 * dx, y - 2 * dy)).unwrap_or(&' ');
 
                 if a.is_ascii_alphabetic() && b.is_ascii_alphabetic() {
-                    let name = iff!(dx > 0 || dy > 0,
+                    let name = iff!(
+                        dx > 0 || dy > 0,
                         format!("{}{}", a, b),
-                        format!("{}{}", b, a));
+                        format!("{}{}", b, a)
+                    );
 
-                    output
-                        .entry(name)
-                        .or_default()
-                        .push((x, y));
+                    output.entry(name).or_default().push((x, y));
                 }
             }
         }
-
     }
 
     output
@@ -92,14 +90,13 @@ fn find_path_length(start: &str, end: &str, grid: &Grid, recur_space: bool) -> O
                 options.push((nx, ny, ring + delta));
             }
         }
-        
+
         for p in options.drain(..) {
             if visited.insert(p) {
                 queue.push_back((p, dist + 1));
             }
         }
     }
-
 
     None
 }
