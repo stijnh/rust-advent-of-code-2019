@@ -16,6 +16,25 @@ macro_rules! iff {
     };
 }
 
+macro_rules! format_err {
+    ($($msg:tt)*) => {
+        $crate::common::StringError(format!($($msg)*))
+    };
+}
+
+macro_rules! bail {
+    ($obj:expr) => {
+        bail!("{}", $obj);
+    };
+    ($($msg:tt)*) => {
+        return std::result::Result::Err(format_err!($($msg)*).into());
+    }
+}
+
+#[derive(Error, Clone, Hash, PartialEq, Eq, PartialOrd, Ord, Debug)]
+#[error("{0}")]
+pub struct StringError(pub String);
+
 #[inline(always)]
 pub fn default<T: Default>() -> T {
     T::default()
