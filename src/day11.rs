@@ -48,7 +48,7 @@ fn paint(mut program: Program, start_tile: i64) -> Result<HashMap<(isize, isize)
         let new_color = match program.resume(Some(color))? {
             ExecState::Halted => break,
             ExecState::Output(c) => c,
-            ExecState::Input => Err(ExecError::InputExhausted)?,
+            ExecState::Input => return Err(ExecError::InputExhausted.into()),
         };
 
         panels.insert((x, y), new_color);
@@ -56,7 +56,7 @@ fn paint(mut program: Program, start_tile: i64) -> Result<HashMap<(isize, isize)
         let turn = match program.resume(None)? {
             ExecState::Halted => break,
             ExecState::Output(c) => c,
-            ExecState::Input => Err(ExecError::InputExhausted)?,
+            ExecState::Input => return Err(ExecError::InputExhausted.into()),
         };
 
         direction = match turn {
@@ -78,7 +78,7 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     let panels = paint(program.clone(), 0)?;
     println!("answer A: {:?}", panels.len());
 
-    let panels = paint(program.clone(), 1)?;
+    let panels = paint(program, 1)?;
     let (min_x, max_x) = (-50, 50);
     let (min_y, max_y) = (-10, 10);
 

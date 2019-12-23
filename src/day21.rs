@@ -6,7 +6,7 @@ fn launch_springdroid(mut program: Program, code: &str) -> Result<Option<i64>> {
     let input = code
         .lines()
         .map(|x| x.trim())
-        .filter(|x| x.len() > 0)
+        .filter(|x| !x.is_empty())
         .interleave_shortest(cycle("\n"))
         .collect::<String>();
 
@@ -57,7 +57,7 @@ pub(crate) fn run(_args: &[&str]) -> Result {
         AND D J
         RUN
     ";
-    let answer = launch_springdroid(program.clone(), code)?;
+    let answer = launch_springdroid(program, code)?;
     println!("answer B: {:?}", answer);
 
     Ok(())

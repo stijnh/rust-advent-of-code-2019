@@ -8,7 +8,7 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     let outputs = program.run(&[1])?;
     println!("answer A: {:?}", outputs);
 
-    let mut program = original.clone();
+    let mut program = original;
     let outputs = program.run(&[5])?;
     println!("answer B: {:?}", outputs);
 

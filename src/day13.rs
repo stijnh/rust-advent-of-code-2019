@@ -26,11 +26,8 @@ fn run_timestep(
     let mut input = Some(input).into_iter();
     let mut outputs = vec![];
 
-    loop {
-        match program.resume(&mut input)? {
-            ExecState::Output(x) => outputs.push(x),
-            _ => break,
-        }
+    while let ExecState::Output(x) =  program.resume(&mut input)? {
+        outputs.push(x)
     }
 
     for slice in outputs.chunks_exact(3) {

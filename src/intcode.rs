@@ -33,7 +33,7 @@ pub(crate) enum ExecState {
 
 pub(crate) fn parse_program(filename: &str) -> Result<Program> {
     let program = read_input(filename)?[0]
-        .split(",")
+        .split(',')
         .map(|s| s.parse::<i64>())
         .collect::<Result<Vec<_>, _>>()?;
 
@@ -86,7 +86,7 @@ impl Program {
 
     pub(crate) fn run(&mut self, inputs: &[i64]) -> Result<Vec<i64>, ExecError> {
         let mut output = vec![];
-        let mut inputs = inputs.into_iter().copied();
+        let mut inputs = inputs.iter().copied();
 
         loop {
             match self.resume(&mut inputs)? {

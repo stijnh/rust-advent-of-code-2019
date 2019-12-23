@@ -99,8 +99,8 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     }
     println!("answer A: {:?}", index);
 
-    let n = 119315717514047;
-    let repeats = 101741582076661;
+    let n = 119_315_717_514_047;
+    let repeats = 101_741_582_076_661;
 
     let (mut a, mut b) = (0, 1);
     for &t in &input {
@@ -126,8 +126,8 @@ pub(crate) fn run(_args: &[&str]) -> Result {
         inv_factor, inv_constant
     );
 
-    let mut index = 2020i128;
-    let mut result = (rep_factor * index + rep_constant).rem_euclid(n);
+    let index = 2020i128;
+    let result = (rep_factor * index + rep_constant).rem_euclid(n);
 
     println!("answer B: {:?}", result);
 

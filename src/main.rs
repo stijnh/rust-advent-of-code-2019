@@ -1,3 +1,6 @@
+#![allow(clippy::many_single_char_names)]
+#![allow(clippy::needless_range_loop)]
+
 #[macro_use]
 mod common;
 mod day01;

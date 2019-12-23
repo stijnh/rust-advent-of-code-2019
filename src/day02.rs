@@ -20,7 +20,7 @@ pub(crate) fn run(_args: &[&str]) -> Result {
                 continue;
             }
 
-            if program.get(0)? == 19690720 {
+            if program.get(0)? == 19_690_720 {
                 println!("answer B: {}", 100 * noun + verb);
             }
         }

@@ -117,8 +117,7 @@ pub(crate) fn run(_args: &[&str]) -> Result {
 
     let goal = grid
         .indexed_iter()
-        .filter(|(_, &val)| val == Goal)
-        .next()
+        .find(|(_, &val)| val == Goal)
         .unwrap()
         .0;
 

@@ -15,16 +15,16 @@ fn presum(signal: &[i8]) -> Vec<i64> {
 
 #[inline(never)]
 fn apply_pattern(signal: &[i8], presum: &[i64], repeats: usize) -> i8 {
-    let n = signal.len();
+    let num = signal.len();
     let mut sum = 0i64;
     let mut index = repeats - 1;
 
-    while index < n {
+    while index < num {
         let a = index;
-        let b = min(a + repeats, n);
-        let c = min(b + repeats, n);
-        let d = min(c + repeats, n);
-        index = min(d + repeats, n);
+        let b = min(a + repeats, num);
+        let c = min(b + repeats, num);
+        let d = min(c + repeats, num);
+        index = min(d + repeats, num);
 
         sum += (presum[b] - presum[a]) - (presum[d] - presum[c]);
     }

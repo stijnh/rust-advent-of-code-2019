@@ -22,7 +22,7 @@ fn parse_input() -> Result<Vec<Reaction>> {
         let parts = line.splitn(2, " => ").collect::<Vec<_>>();
         let mut reaction: Reaction = default();
 
-        for input in parts[0].split(",") {
+        for input in parts[0].split(',') {
             reaction.input.push(parse_element(input)?);
         }
 
@@ -100,7 +100,7 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     toposort(&mut reactions);
 
     println!("answer A: {}", find_ore_for_fuel(&reactions, 1));
-    println!("answer B: {}", find_fuel_for_ore(&reactions, 1000000000000));
+    println!("answer B: {}", find_fuel_for_ore(&reactions, 1_000_000_000_000));
 
     Ok(())
 }

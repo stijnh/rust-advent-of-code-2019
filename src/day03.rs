@@ -26,7 +26,7 @@ fn parse_wire(string: &str) -> Result<Vec<Line>> {
     let mut wire = vec![];
     let (mut x, mut y) = (0, 0);
 
-    for part in string.split(",") {
+    for part in string.split(',') {
         let letter = &part[..1];
         let number = part[1..].parse::<i64>()?;
 

@@ -13,7 +13,7 @@ impl fmt::Display for KeySet {
         f.write_str("KeySet(")?;
 
         for i in 0..26 {
-            let x = (('a' as u8) + i) as char;
+            let x = (b'a' + i) as char;
             let c = iff!(self.contains_key(x), x, '.');
             write!(f, "{}", c)?;
         }
@@ -159,7 +159,7 @@ fn explore_grid_four(grid: ArrayView2<char>) -> Option<usize> {
     while let Some((indices, keys, d)) = queue.pop() {
         if waiting == 0 {
             println!("{} {} {}", d, states.len(), queue.len());
-            waiting = 1000000;
+            waiting = 1_000_000;
         }
         waiting -= 1;
 
@@ -210,7 +210,6 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     let answer = explore_grid(grid.view());
     println!("answer A: {:?}", answer);
 
-    let mut grid = grid.clone();
     let (x, y) = (w / 2, h / 2);
     grid[[x - 1, y - 1]] = '0';
     grid[[x - 1, y]] = '#';
