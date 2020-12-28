@@ -26,7 +26,7 @@ fn run_timestep(
     let mut input = Some(input).into_iter();
     let mut outputs = vec![];
 
-    while let ExecState::Output(x) =  program.resume(&mut input)? {
+    while let ExecState::Output(x) = program.resume(&mut input)? {
         outputs.push(x)
     }
 

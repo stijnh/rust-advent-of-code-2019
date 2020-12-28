@@ -100,7 +100,10 @@ pub(crate) fn run(_args: &[&str]) -> Result {
     toposort(&mut reactions);
 
     println!("answer A: {}", find_ore_for_fuel(&reactions, 1));
-    println!("answer B: {}", find_fuel_for_ore(&reactions, 1_000_000_000_000));
+    println!(
+        "answer B: {}",
+        find_fuel_for_ore(&reactions, 1_000_000_000_000)
+    );
 
     Ok(())
 }

@@ -115,11 +115,7 @@ pub(crate) fn run(_args: &[&str]) -> Result {
 
     print_grid(grid.view());
 
-    let goal = grid
-        .indexed_iter()
-        .find(|(_, &val)| val == Goal)
-        .unwrap()
-        .0;
+    let goal = grid.indexed_iter().find(|(_, &val)| val == Goal).unwrap().0;
 
     let dist = calculate_dist(goal, grid.view());
     println!("answer A: {}", dist[start]);
