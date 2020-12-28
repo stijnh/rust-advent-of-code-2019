@@ -1,5 +1,5 @@
 pub use anyhow::{Context, Error};
-pub use itertools::{enumerate, zip, all, any};
+pub use itertools::{all, any, enumerate, zip, Itertools as _};
 use std::default::Default;
 use std::fs::File;
 use std::io::{BufRead, BufReader};

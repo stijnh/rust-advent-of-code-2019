@@ -1,17 +1,16 @@
 [package]
-name = "advent2019"
-version = "0.1.0"
 authors = ["Stijn"]
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
+name = "advent2019"
+version = "0.1.0"
 [dependencies]
 anyhow = "1.0"
-thiserror = "1.0"
-itertools = "0.8"
-ndarray = "0.13"
-float-ord = "0.2"
-regex = "1.3"
-rand = "*"
+arrayvec = "0.5.1"
 binary-heap-plus = "0.2.0"
+defaultmap = "0.5.0"
+float-ord = "0.2"
+itertools = "0.8"
+ndarray = "0.14.0"
+rand = "*"
+regex = "1.3"
+thiserror = "1.0"
